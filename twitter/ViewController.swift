@@ -13,6 +13,7 @@ class ViewController: UIViewController {
     internal var loginController: LoginViewController!
 
     @IBOutlet weak var loadingFullView: UIView!
+    @IBOutlet weak var collectionView: UICollectionView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,6 +33,11 @@ class ViewController: UIViewController {
             animateOutFullLoadingView()
             
             // Fetch new tweets
+            APIClient.instance.getRecentTweets(withSuccess: { (tweets :[Tweet]) in
+                //
+            }, failure: { (error: Error?) in
+                //
+            })
         }
     }
 
