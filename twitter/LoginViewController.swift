@@ -7,9 +7,14 @@
 //
 
 import UIKit
-import BDBOAuth1Manager
+
+protocol LoginViewControllerDelegate: class {
+    func didFinishLogin(withSuccess success: Bool, controller: LoginViewController)
+}
 
 class LoginViewController: UIViewController {
+    
+    weak var delegate: LoginViewControllerDelegate?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -18,19 +23,26 @@ class LoginViewController: UIViewController {
     }
 
     @IBAction func onLoginButton(sender: AnyObject) {
-        let twitterClient = BDBOAuth1SessionManager(baseURL: URL(string: "https://api.twitter.com"), consumerKey: "QNPI0H6RYyx6AykIqoaVXpK6f", consumerSecret: "1dhfqDmM1XteQJc5K3nKQYaQAdjmGQX1lE0oaiPmHDBNxQCnSE")
-        
-        twitterClient?.fetchRequestToken(withPath: "oauth/request_token", method: "GET", callbackURL: URL(string: "tweets://oath"), scope: nil, success: { (requestToken: BDBOAuth1Credential?) in
-            
-            if let credential = requestToken {
-                let path = "https://api.twitter.com/oauth/authorize?oauth_token=\(credential.token!)"
-                let url = URL(string: path)
-                UIApplication.shared.open(url!, options: [:], completionHandler: nil)
-            }
+        APIClient.instance.fetchRequestToken(withSuccess: { (token: String) in
+            let path = "https://api.twitter.com/oauth/authorize?oauth_token=\(token)"
+            let url = URL(string: path)
+            UIApplication.shared.open(url!, options: [:], completionHandler: nil)
             
         }, failure: { (error: Error?) in
             print("error: \(error!.localizedDescription)")
         })
+    }
+    
+    func process(oauthCredentialsString: String) {
+        APIClient.instance.fetchAccessToken(withOauthCredentialsString: oauthCredentialsString, success: {() -> Void in
+            if let del = self.delegate {
+                del.didFinishLogin(withSuccess: true, controller: self)
+            }
+        }) {(error: Error?) -> Void in
+            if let del = self.delegate {
+                del.didFinishLogin(withSuccess: false, controller: self)
+            }
+        }
     }
 
 }
