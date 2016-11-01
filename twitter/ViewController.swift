@@ -12,20 +12,38 @@ class ViewController: UIViewController {
     
     internal var loginController: LoginViewController!
 
+    @IBOutlet weak var loadingFullView: UIView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // If we are not authorized yet we want to show the login screen
-        loginController = storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
-        loginController.delegate = self
-        addChildViewController(loginController)
-        loginController.view.frame = view.bounds
-        view.addSubview(loginController.view)
-        loginController.didMove(toParentViewController: self)
+        if (!APIClient.instance.isAuthorized()) {
+            loginController = storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
+            loginController.delegate = self
+            addChildViewController(loginController)
+            loginController.view.frame = view.bounds
+            view.addSubview(loginController.view)
+            loginController.didMove(toParentViewController: self)
+        
+        } else {
+            
+            // We want to show cached items so we animate out the full loading view
+            animateOutFullLoadingView()
+            
+            // Fetch new tweets
+        }
     }
 
     func process(oauthCredentialsString: String) {
         loginController.process(oauthCredentialsString: oauthCredentialsString)
+    }
+    
+    func animateOutFullLoadingView() {
+        UIView.animate(withDuration: 0.3, animations: {() -> Void in
+            self.loadingFullView.alpha = 0.0
+            self.loadingFullView.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
+        })
     }
 
 }

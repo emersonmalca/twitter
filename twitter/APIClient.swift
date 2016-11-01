@@ -12,6 +12,8 @@ import BDBOAuth1Manager
 class APIClient: NSObject {
     
     let sessionManager = BDBOAuth1SessionManager(baseURL: URL(string: "https://api.twitter.com"), consumerKey: "QNPI0H6RYyx6AykIqoaVXpK6f", consumerSecret: "1dhfqDmM1XteQJc5K3nKQYaQAdjmGQX1lE0oaiPmHDBNxQCnSE")!
+    
+    let mapper = TweetsResponseMapper()
 
     class var instance: APIClient {
         struct Static {
@@ -21,8 +23,12 @@ class APIClient: NSObject {
     }
     
     /*
-     Login methods
+     Authentication methods
     */
+    
+    func isAuthorized() -> Bool {
+        return sessionManager.isAuthorized
+    }
     
     func fetchRequestToken(withSuccess success:((String) -> Swift.Void)!, failure: ((Error?) -> Swift.Void)!) {
         
@@ -49,5 +55,22 @@ class APIClient: NSObject {
         }) {(error: Error?) -> Void in
             failure(error)
         }
+    }
+    
+    /*
+     Timeline methods
+     */
+    
+    func getRecentTweets(withSuccess success:(([Tweet]) -> Swift.Void)!, failure: ((Error?) -> Swift.Void)!) {
+        
+        sessionManager.get("", parameters: nil, progress: nil, success: { (task: URLSessionDataTask, responseObject: Any?) -> Void in
+            
+            let dicts = responseObject as! [Dictionary<String, Any>]
+            let tweets = self.mapper.toTweets(dicts)
+            success(tweets)
+
+        }, failure: {(task: URLSessionDataTask?, error: Error) -> Void in
+            failure(error)
+        })
     }
 }
