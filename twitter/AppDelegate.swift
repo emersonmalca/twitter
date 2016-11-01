@@ -23,8 +23,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Check for OAuth callback
         if url.host! == "oauth" {
-            if let controller = window?.rootViewController as? ViewController {
-                controller.process(oauthCredentialsString: url.query!)
+            if let nav = window?.rootViewController as? UINavigationController {
+                if let controller = nav.topViewController as? ViewController {
+                    controller.process(oauthCredentialsString: url.query!)
+                }
             }
         }
         
