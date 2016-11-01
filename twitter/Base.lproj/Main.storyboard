@@ -22,37 +22,18 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Jqz-ur-WoN">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                                <subviews>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Twitter_logo_white" translatesAutoresizingMaskIntoConstraints="NO" id="ns5-44-iCI">
-                                        <rect key="frame" x="137" y="293" width="100" height="81"/>
-                                        <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="100" id="3ly-yd-1t0"/>
-                                            <constraint firstAttribute="height" constant="81" id="oJI-rr-eMg"/>
-                                        </constraints>
-                                    </imageView>
-                                </subviews>
-                                <color key="backgroundColor" red="0.082352943720000002" green="0.62745100259999997" blue="0.88235294819999999" alpha="1" colorSpace="calibratedRGB"/>
-                                <constraints>
-                                    <constraint firstItem="ns5-44-iCI" firstAttribute="centerX" secondItem="Jqz-ur-WoN" secondAttribute="centerX" id="ADq-Ui-0Nj"/>
-                                    <constraint firstItem="ns5-44-iCI" firstAttribute="centerY" secondItem="Jqz-ur-WoN" secondAttribute="centerY" id="ECV-mo-0yZ"/>
-                                </constraints>
-                            </view>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="JqB-5O-T1I">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                 <color key="backgroundColor" white="0.94999999999999996" alpha="1" colorSpace="calibratedWhite"/>
-                                <inset key="scrollIndicatorInsets" minX="0.0" minY="72" maxX="0.0" maxY="0.0"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="hRQ-Z5-mW8">
                                     <size key="itemSize" width="320" height="140"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                                    <inset key="sectionInset" minX="8" minY="72" maxX="8" maxY="8"/>
+                                    <inset key="sectionInset" minX="8" minY="8" maxX="8" maxY="8"/>
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="TweetCell" id="wvz-fS-8sm" customClass="TweetCell" customModule="twitter" customModuleProvider="target">
-                                        <rect key="frame" x="28" y="72" width="320" height="140"/>
+                                        <rect key="frame" x="28" y="8" width="320" height="140"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="0.0" y="0.0" width="320" height="140"/>
@@ -198,6 +179,24 @@
                                     <outlet property="delegate" destination="Eew-Ok-HqX" id="Mxh-wa-hSt"/>
                                 </connections>
                             </collectionView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Jqz-ur-WoN">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <subviews>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Twitter_logo_white" translatesAutoresizingMaskIntoConstraints="NO" id="ns5-44-iCI">
+                                        <rect key="frame" x="137" y="293" width="100" height="81"/>
+                                        <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="100" id="3ly-yd-1t0"/>
+                                            <constraint firstAttribute="height" constant="81" id="oJI-rr-eMg"/>
+                                        </constraints>
+                                    </imageView>
+                                </subviews>
+                                <color key="backgroundColor" red="0.082352943720000002" green="0.62745100259999997" blue="0.88235294819999999" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstItem="ns5-44-iCI" firstAttribute="centerX" secondItem="Jqz-ur-WoN" secondAttribute="centerX" id="ADq-Ui-0Nj"/>
+                                    <constraint firstItem="ns5-44-iCI" firstAttribute="centerY" secondItem="Jqz-ur-WoN" secondAttribute="centerY" id="ECV-mo-0yZ"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="0.94999999999999996" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>

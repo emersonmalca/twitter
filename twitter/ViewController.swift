@@ -19,10 +19,18 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        automaticallyAdjustsScrollViewInsets = true
+        
         /*
         let flowLayout = collectionView.collectionViewLayout as! UICollectionViewFlowLayout
         flowLayout.estimatedItemSize = CGSize(width: 200.0, height: 60.0)
         */
+        
+        // Set refresh control
+        collectionView.refreshControl = UIRefreshControl()
+        collectionView.refreshControl?.addTarget(self, action: #selector(didPullToRefresh), for: .valueChanged)
+        
+        
         // If we are not authorized yet we want to show the login screen
         if (!APIClient.instance.isAuthorized()) {
             loginController = storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
@@ -34,11 +42,12 @@ class ViewController: UIViewController {
         
         } else {
             
-            // We want to show cached items so we animate out the full loading view
-            animateOutFullLoadingView()
-            
             // Fetch new tweets
-            fetchRecentTweets()
+            fetchRecentTweets(completion: {
+                
+                // We want to show cached items so we animate out the full loading view
+                self.animateOutFullLoadingView()
+            })
         }
     }
 
@@ -46,15 +55,36 @@ class ViewController: UIViewController {
         loginController.process(oauthCredentialsString: oauthCredentialsString)
     }
     
-    func fetchRecentTweets() {
+    func didPullToRefresh(sender: UIRefreshControl) {
+        // Fetch new tweets
+        fetchRecentTweets(completion: {
+            
+            // We want to show cached items so we animate out the full loading view
+            self.animateOutFullLoadingView()
+            
+            sender.endRefreshing()
+        })
+    }
+    
+    func fetchRecentTweets(completion: (() -> ())?) {
         APIClient.instance.getRecentTweets(withSuccess: { (tweets :[Tweet]) in
             // Reload data
             self.tweets.removeAll()
             self.tweets.append(contentsOf: tweets)
             self.collectionView.reloadData()
             
+            // Call completion if any
+            if let callback = completion {
+                callback()
+            }
+            
         }, failure: { (error: Error?) in
             print(error!.localizedDescription)
+            
+            // Call completion if any
+            if let callback = completion {
+                callback()
+            }
         })
     }
     
@@ -81,11 +111,11 @@ extension ViewController: LoginViewControllerDelegate {
             controller.removeFromParentViewController()
             self.loginController = nil
             
-            // We want to show cached items so we animate out the full loading view
-            self.animateOutFullLoadingView()
-            
             // Fetch new tweets
-            self.fetchRecentTweets()
+            self.fetchRecentTweets(completion: { 
+                // We want to show cached items so we animate out the full loading view
+                self.animateOutFullLoadingView()
+            })
         }
     }
 }
