@@ -11,6 +11,7 @@ import UIKit
 class ViewController: UIViewController {
     
     internal var loginController: LoginViewController!
+    var tweets = [Tweet]()
 
     @IBOutlet weak var loadingFullView: UIView!
     @IBOutlet weak var collectionView: UICollectionView!
@@ -18,6 +19,10 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        /*
+        let flowLayout = collectionView.collectionViewLayout as! UICollectionViewFlowLayout
+        flowLayout.estimatedItemSize = CGSize(width: 200.0, height: 60.0)
+        */
         // If we are not authorized yet we want to show the login screen
         if (!APIClient.instance.isAuthorized()) {
             loginController = storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
@@ -33,16 +38,24 @@ class ViewController: UIViewController {
             animateOutFullLoadingView()
             
             // Fetch new tweets
-            APIClient.instance.getRecentTweets(withSuccess: { (tweets :[Tweet]) in
-                //
-            }, failure: { (error: Error?) in
-                //
-            })
+            fetchRecentTweets()
         }
     }
 
     func process(oauthCredentialsString: String) {
         loginController.process(oauthCredentialsString: oauthCredentialsString)
+    }
+    
+    func fetchRecentTweets() {
+        APIClient.instance.getRecentTweets(withSuccess: { (tweets :[Tweet]) in
+            // Reload data
+            self.tweets.removeAll()
+            self.tweets.append(contentsOf: tweets)
+            self.collectionView.reloadData()
+            
+        }, failure: { (error: Error?) in
+            print(error!.localizedDescription)
+        })
     }
     
     func animateOutFullLoadingView() {
@@ -67,7 +80,29 @@ extension ViewController: LoginViewControllerDelegate {
             controller.view.removeFromSuperview()
             controller.removeFromParentViewController()
             self.loginController = nil
+            
+            // We want to show cached items so we animate out the full loading view
+            self.animateOutFullLoadingView()
+            
+            // Fetch new tweets
+            self.fetchRecentTweets()
         }
+    }
+}
+
+extension ViewController: UICollectionViewDataSource {
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return tweets.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "TweetCell", for: indexPath) as! TweetCell
+        
+        let tweet = tweets[indexPath.row]
+        cell.update(withTweet: tweet)
+        return cell
     }
 }
 

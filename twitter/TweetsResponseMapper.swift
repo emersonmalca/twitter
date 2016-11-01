@@ -21,13 +21,23 @@ class TweetsResponseMapper: NSObject {
         var tweets = [Tweet]()
         
         for dict in dicts {
+            
+            // Tweet
             let text = dict["text"] as? String
             let retweetCount = dict["retweet_count"] as? Int ?? 0
             let favoritesCount = dict["favourites_count"] as? Int ?? 0
             let timeString = dict["created_at"] as? String
             let timestamp = formatter.date(from: timeString!)
             
-            let tweet = Tweet(text: text, timestamp: timestamp, retweetCount: retweetCount, favoritesCount: favoritesCount)
+            // Owner
+            let ownerDict = dict["user"] as! NSDictionary
+            let ownerName = ownerDict["name"] as! String
+            let ownerHandle = ownerDict["screen_name"] as! String
+            let ownerAvatarString = ownerDict["profile_image_url"] as! String
+            let ownerAvatarURL = URL(string: ownerAvatarString)
+            
+            let owner = User(name: ownerName, handle: ownerHandle, avatarURL: ownerAvatarURL!)
+            let tweet = Tweet(owner: owner, text: text, timestamp: timestamp, retweetCount: retweetCount, favoritesCount: favoritesCount)
             tweets.append(tweet)
             
         }

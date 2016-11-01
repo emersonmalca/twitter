@@ -49,8 +49,17 @@ class APIClient: NSObject {
         
         sessionManager.fetchAccessToken(withPath: "oauth/access_token", method: "POST", requestToken: requestToken, success: {(accessToken: BDBOAuth1Credential?) -> Void in
             
-            print("Access token fetched")
-            success()
+            //Save access token
+            self.sessionManager.requestSerializer.saveAccessToken(accessToken)
+            
+            // Verify credentials
+            self.sessionManager.get("1.1/account/verify_credentials.json", parameters: nil, progress: nil, success: { (task: URLSessionDataTask, responseObject: Any?) in
+ 
+                success()
+                
+            }, failure: { (task: URLSessionDataTask?, error: Error) in
+                failure(error)
+            })
             
         }) {(error: Error?) -> Void in
             failure(error)
@@ -63,7 +72,7 @@ class APIClient: NSObject {
     
     func getRecentTweets(withSuccess success:(([Tweet]) -> Swift.Void)!, failure: ((Error?) -> Swift.Void)!) {
         
-        sessionManager.get("", parameters: nil, progress: nil, success: { (task: URLSessionDataTask, responseObject: Any?) -> Void in
+        sessionManager.get("1.1/statuses/home_timeline.json", parameters: nil, progress: nil, success: { (task: URLSessionDataTask, responseObject: Any?) -> Void in
             
             let dicts = responseObject as! [Dictionary<String, Any>]
             let tweets = self.mapper.toTweets(dicts)

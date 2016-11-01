@@ -10,6 +10,7 @@ import Foundation
 
 struct Tweet {
     
+    let owner: User
     let text: String?
     let timestamp: Date?
     let retweetCount: Int
